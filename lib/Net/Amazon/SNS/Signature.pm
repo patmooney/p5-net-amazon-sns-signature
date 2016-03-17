@@ -17,17 +17,18 @@ For the verification of Amazon SNS messages
 
 =head1 USAGE
 
-    # Will automatically download the certificate using LWP::UserAgent->get
-    my $sns_signature = Net::Amazon::SNS::Signature->new( message => $message_ref );
-    if ( $sns_signature->verify() ){
-        ...
-    }
+    # Will download the signature certificate from SigningCertURL attribute of $message_ref
+    # use LWP::UserAgent
+    my $sns_signature = Net::Amazon::SNS::Signature->new();
+    if ( $sns_signature->verify( $message_ref ) ){ ... }
+
+    # Will automatically download the certificate using your own user_agent ( supports ->get returns HTTP::Response )
+    my $sns_signature = Net::Amazon::SNS::Signature->new( user_agent => $my_user_agent );
+    if ( $sns_signature->verify( $message_ref ) ){ ... }
 
     # Provide the certificate yourself
-    my $sns_signature = Net::Amazon::SNS::Signature->new( message => $message_ref, certificate => $public_key );
-    if ( $sns_signature->verify() ){
-        ...
-    }
+    my $sns_signature = Net::Amazon::SNS::Signature->new()
+    if ( $sns_signature->verify({ message => $message_ref, certificate => $x509_cert }) ) { ... }
 
 =head2 verify
 
