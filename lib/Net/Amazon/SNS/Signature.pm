@@ -13,7 +13,7 @@ Net::Amazon::SNS::Signature
 
 =head1 DESCRIPTION
 
-For verification of Amazon SNS messages
+For the verification of Amazon SNS messages
 
 =head1 USAGE
 
