@@ -70,7 +70,7 @@ Usage:
 sub build_sign_string {
     my ( $self, $message ) = @_;
 
-    my @keys = ( qw/Message MessageId/, ( defined($message->{Subject}) ? 'Subject' : () ), qw/Timestamp TopicArn Type/ );
+    my @keys = $self->_signature_keys( $message );
     defined($message->{$_}) or carp( sprintf( "%s is required", $_ ) ) for @keys;
     return join( "\n", ( map { ( $_, $message->{$_} ) } @keys ), "" );
 }
@@ -103,6 +103,20 @@ sub user_agent {
         $self->{user_agent} = LWP::UserAgent->new();
     }
     return $self->{user_agent};
+}
+
+sub _signature_keys {
+    my ( $self, $message ) = @_;
+    my @keys = qw/Message MessageId/;
+
+    if ( $message->{Type} && $message->{Type} =~ m/\A(?:Subscription|Unsubscribe)Confirmation\z/ ){
+        push @keys, qw/SubscribeURL Timestamp Token/;
+    }
+    else {
+        push @keys, ( defined ( $message->{Subject} ) ? qw/Subject Timestamp/ : 'Timestamp' );
+    }
+
+    return @keys, qw/TopicArn Type/;
 }
 
 1;
