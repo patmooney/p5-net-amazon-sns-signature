@@ -28,12 +28,29 @@ For the verification of Amazon SNS messages
 
     # Provide the certificate yourself
     my $sns_signature = Net::Amazon::SNS::Signature->new()
-    if ( $sns_signature->verify({ message => $message_ref, certificate => $x509_cert }) ) { ... }
+    if ( $sns_signature->verify( $message_ref, $x509_cert ) ) { ... }
 
 =head2 verify
 
-Call to verify the message, C<$message> is required as first parameter, C<$cert> is
-optional and should be a raw x509 certificate as downloaded from Amazon.
+Call to verify the message, C<$message_ref> is required as first parameter and should be
+a hash ref, C<$x509_cert> is optional and should be a raw x509 certificate as downloaded 
+from Amazon.
+
+See L<http://docs.aws.amazon.com/sns/latest/dg/SendMessageToHttp.verify.signature.html> for
+information on the content of a message
+
+Usage:
+
+    my $is_verified = $this->verify({
+        Message         => 'My Test Message',
+        MessageId       => '4d4dc071-ddbf-465d-bba8-08f81c89da64',
+        Subject         => 'My subject',
+        Timestamp       => '2012-06-05T04:37:04.321Z',
+        TopicArn        => 'arn:aws:sns:us-east-1:123456789012:s4-MySNSTopic-1G1WEFCOXTC0P',
+        Type            => 'Notification',
+        Signature       => 'EXAMPLElDMXvB8r9R83tGoNn0ecwd5UjllzsvSvbItzfaMpN2nk5HVSw7XnOn',
+        SigningCertURL  => 'https://sns.us-west-2.amazonaws.com/SimpleNotificationService-f3e'
+    });
 
 =cut
 
